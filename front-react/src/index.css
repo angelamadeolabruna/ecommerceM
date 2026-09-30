@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --color-brand-50: #101a30;
+  --color-brand-100: #1c2b4d;
+  --color-brand-200: #2a4070;
+  --color-brand-300: #3a5591;
+  --color-brand-400: #4f7fdf;
+  --color-brand-500: #5b87e8;
+  --color-brand-600: #7aa6ff;
+  --color-brand-700: #9dbbff;
+  --color-brand-800: #c2d5ff;
+  --color-brand-900: #dbe7ff;
+  --color-brand-950: #eff5ff;
+
+  --color-accent-50: #241c08;
+  --color-accent-100: #332a0f;
+  --color-accent-200: #4a3d16;
+  --color-accent-300: #6a581f;
+  --color-accent-400: #eab308;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #ffc95e;
+  --color-accent-800: #ffd98a;
+  --color-accent-900: #ffe9b8;
+  --color-accent-950: #fff7e0;
+
+  --color-success-50: #0b1b14;
+  --color-success-500: #34d399;
+  --color-success-600: #1f9d6c;
+  --color-success-700: #6ee7b7;
+
+  --color-danger-50: #2a1010;
+  --color-danger-500: #f87171;
+  --color-danger-600: #ef4444;
+  --color-danger-700: #fca5a5;
+
+  --color-warning-50: #231d08;
+  --color-warning-500: #fbbf24;
+
+  --color-ink-50: #0d0d11;
+  --color-ink-100: #1b1b21;
+  --color-ink-200: #24242c;
+  --color-ink-300: #33333d;
+  --color-ink-400: #9c9ca6;
+  --color-ink-500: #a8a8b3;
+  --color-ink-600: #c2c2cc;
+  --color-ink-700: #d7d7df;
+  --color-ink-800: #ebebf0;
+  --color-ink-900: #f7f7fa;
+  --color-ink-950: #050507;
+
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(20 23 28 / 0.06), 0 4px 16px rgb(20 23 28 / 0.06);
+  --shadow-card-hover: 0 8px 20px rgb(20 23 28 / 0.12);
+  --shadow-pop: 0 12px 32px rgb(20 23 28 / 0.18);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased text-ink-800;
+    background-color: #0a0a0d;
+  }
+
+  .bg-white {
+    background-color: #17171c !important;
+  }
+
+  .bg-white\/95 {
+    background-color: rgb(11 11 13 / 0.94) !important;
+  }
+
+  .bg-white\/90 {
+    background-color: rgb(12 12 15 / 0.92) !important;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-100);
+    color: var(--color-ink-950);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

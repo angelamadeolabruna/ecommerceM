@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+.env.*
+*.bak
+*.tsbuildinfo
+e2e_*.js
+*.log

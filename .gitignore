@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+*.log
+*.bak
+*.tsbuildinfo
+
+# Los PDF de comprobantes y los respaldos de la base se generan al usar la
+# tienda, no son parte del codigo.
+backend-nest/comprobantes/
+backend-nest/respaldos/
+backend-nest/storage/
+
+# La base de datos de docker, por si alguien la levanta aqui.
+postgres-data/

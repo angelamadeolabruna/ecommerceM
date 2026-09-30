@@ -1,0 +1,106 @@
+# Tienda Montano completo: base de datos + backend + tienda, en un solo
+# lugar. Se levanta desde la raiz del repo:
+#   docker compose up --build -d
+#
+#   Tienda  -> http://localhost:8080
+#   API     -> http://localhost:8080/api/v1/health
+#   pgAdmin -> http://localhost:5050  (admin@tiendasmontano.bo / admin)
+#
+# El nginx de front-react manda todo lo que empieza con /api al backend, de
+# modo que el navegador nunca sale de este dominio: no hace falta https ni
+# configurar CORS.
+#
+# Para empezar la base de cero:  docker compose down -v
+
+name: tiendas-montano
+
+services:
+  db:
+    image: postgres:15-bookworm
+    restart: unless-stopped
+    # La API se conecta siempre con SSL (app.module.ts), asi que Postgres
+    # lo habilita con el certificado autofirmado que trae la imagen.
+    command: >
+      -c ssl=on
+      -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+      -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    environment:
+      POSTGRES_DB: tiendas_montano
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      TZ: America/La_Paz
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # El esquema y los datos se cargan solo con el volumen vacio, en orden
+      # alfabetico, que es el orden en que los ejecuta Postgres.
+      - "./BASE DE DATOS/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro"
+      - "./BASE DE DATOS/poblacion_datos.sql:/docker-entrypoint-initdb.d/02_poblacion_datos.sql:ro"
+      - "./BASE DE DATOS/seed_imagenes_productos.sql:/docker-entrypoint-initdb.d/03_seed_imagenes_productos.sql:ro"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tiendas_montano"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build: ./backend-nest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-postgres}@db:5432/tiendas_montano
+      DB_SSL: "false"
+      JWT_SECRET: ${JWT_SECRET:-clave-local-de-docker-cambiar-en-produccion}
+      JWT_ACCESS_TOKEN_MINUTES: 15
+      JWT_REFRESH_TOKEN_DAYS: 7
+      JWT_ALGORITHM: HS256
+      # Viene por el nginx de front-react, el navegador nunca lo ve.
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
+      EMAIL_ENABLED: "false"
+      EMAIL_BASE_URL: ${FRONTEND_URL:-http://localhost:8080}
+      STORAGE_BACKEND: local
+      STORAGE_COMPROBANTES: /data/comprobantes
+      RESPALDOS_DIR: /data/respaldos
+      STORAGE_PATH: /data/reportes
+      RESPALDOS_PG_DUMP_PATH: pg_dump
+      TZ: America/La_Paz
+    ports:
+      - "${API_PORT:-3000}:3000"
+    volumes:
+      - api-data:/data
+
+  web:
+    build: ./front-react
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      API_HOST: api
+      API_PORT: 3000
+    ports:
+      - "${WEB_PORT:-8080}:80"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@tiendasmontano.bo}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  db-data:
+  api-data:
+  pgadmin-data:
