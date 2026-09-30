@@ -1,3 +1,9 @@
+-- Seed de datos de prueba. Se desactivan los triggers de inventario
+-- porque los datos de stock ya vienen cargados arriba y el trigger
+-- intentaria insertarlos otra vez. Se reactivan al final.
+ALTER TABLE movimientos_inventario DISABLE TRIGGER trg_movimiento_inventario;
+ALTER TABLE usuarios DISABLE TRIGGER trg_bloquear_usuario_5_intentos;
+
 -- =====================================================================
 --  TIENDAS MONTAÑO  ·  SCRIPT DE POBLACIÓN DE DATOS
 --  E-commerce de ropa  ·  PostgreSQL 14+
@@ -89,7 +95,6 @@ TRUNCATE TABLE respaldos, conversaciones_ia, reportes_generativos,
     usuarios, roles
     RESTART IDENTITY CASCADE;
 
-
 -- =====================================================================
 -- 1. ROLES  ·  4 filas
 -- Los permisos van en el JSONB que la aplicación lee depermisos_json.
@@ -100,7 +105,6 @@ INSERT INTO roles (id_rol, nombre_rol, descripcion, permisos_json, estado) VALUE
   (2, 'Gerente', 'Administra ciudades, sucursales, catalogo y proveedores', '["gestionar_usuarios","gestionar_reservas","gestionar_ciudades","gestionar_catalogo","gestionar_compras","ver_reportes"]'::jsonb, 'Activo'),
   (3, 'Vendedor', 'Atiende en el mostrador y procesa ventas en caja', '["ver_catalogo","registrar_venta","procesar_pago","gestionar_reservas","gestionar_devoluciones"]'::jsonb, 'Activo'),
   (4, 'Cliente', 'Compra por la web, sin acceso al area interna', '["ver_catalogo","gestionar_carrito","realizar_compra","gestionar_reservas","usar_vestidor_ra"]'::jsonb, 'Activo');
-
 
 -- =====================================================================
 -- 2. USUARIOS  ·  14 filas
@@ -124,7 +128,6 @@ INSERT INTO usuarios (id_usuario, email, ci, password_hash, estado, intentos_fal
   (13, 'pedro.rojas@correo.com',         '4567893-4N', '$2b$10$2wK2zL4fN6rS8tU0vW2xY4zA6cE8gI0kM2oQ4rS6tU8vW0xY2zA4cE6gI8kM', 'Pendiente', 0, '2026-09-25 21:30:00', NULL, NULL),
   (14, 'ana.lopez@correo.com',           NULL,         '$2b$10$3xL3aM5gO7sT9uV1wX3zA5cE7gI9kM1oQ3rS5tU7vW9xY1zA3cE5gI9kM1o', 'Pendiente', 0, '2026-09-26 12:00:00', NULL, NULL);
 
-
 -- =====================================================================
 -- 3. CIUDADES  ·  3 filas
 -- =====================================================================
@@ -133,7 +136,6 @@ INSERT INTO ciudades (id_ciudad, nombre, pais, estado) VALUES
   (1, 'La Paz',       'Bolivia', 'Activa'),
   (2, 'Santa Cruz',   'Bolivia', 'Activa'),
   (3, 'Cochabamba',   'Bolivia', 'Activa');
-
 
 -- =====================================================================
 -- 4. TALLAS  ·  8 filas.  El orden va del XS al XXG, como lo usa la web.
@@ -148,7 +150,6 @@ INSERT INTO tallas (id_talla, nombre, orden) VALUES
   (6, 'XXL', 6),
   (7, 'XXXL',7),
   (8, 'Única',8);
-
 
 -- =====================================================================
 -- 5. COLORES  ·  10 filas
@@ -166,7 +167,6 @@ INSERT INTO colores (id_color, nombre, codigo_hex) VALUES
   ( 9, 'Rosa',         '#DB7093'),
   (10, 'Mostaza',      '#FFBF00');
 
-
 -- =====================================================================
 -- 6. CATEGORIAS  ·  8 filas
 -- =====================================================================
@@ -181,7 +181,6 @@ INSERT INTO categorias (id_categoria, nombre, descripcion) VALUES
   (7, 'Blusas',       'Blusas y camisas'),
   (8, 'Accesorios',   'Cinturones, bufandas, gorros y bolsos');
 
-
 -- =====================================================================
 -- 7. TEMPORADAS  ·  4 filas
 -- =====================================================================
@@ -191,7 +190,6 @@ INSERT INTO temporadas (id_temporada, nombre, fecha_inicio, fecha_fin, estado) V
   (2, 'Otoño-Invierno 2026',   '2026-04-01', '2026-08-31', 'Activa'),
   (3, 'Navidad 2026',          '2026-11-01', '2026-12-31', 'Programada'),
   (4, 'Permanente',            NULL,          NULL,          'Activa');
-
 
 -- =====================================================================
 -- 8. PROVEEDORES  ·  8 filas
@@ -207,7 +205,6 @@ INSERT INTO proveedores (id_proveedor, nombre_empresa, persona_contacto, telefon
   (6, 'Denim-works Bolivia',       'Fernando Yucra',     '+591 71666778', 'orders@denimworks.bo',     'Parque Latinoamericano 12, La Paz',       'Mezclilla y denim de alta calidad',      28, 'Activo', 90),
   (7, 'Modaprints S.R.L.',         'Claudia Salazar',     '+591 72777889', 'ventas@modaprints.bo',    'Av. Ballivián 320, La Paz',               'Impresión y serigrafía de prendas',      15, 'Activo', 82),
   (8, 'Textil Bazaar',             'Iván Miranda',        '+591 73888990', 'compras@textilbazaar.bo',  'Av. Cristo Redentor 901, La Paz',         'Proveedor de oportunidad, lotes',       40, 'Inactivo', 55);
-
 
 -- =====================================================================
 -- 9. USUARIOS_ROLES  ·  18 filas
@@ -230,7 +227,6 @@ INSERT INTO usuarios_roles (id_usuario, id_rol) VALUES
   (13, 4),  -- pedro.rojas
   (14, 4);  -- ana.lopez
 
-
 -- =====================================================================
 -- 10. CLIENTES  ·  8 filas
 -- usuario_id es UNIQUE, asi que un usuario tiene COMO MUCHO una ficha.
@@ -245,7 +241,6 @@ INSERT INTO clientes (id_cliente, usuario_id, nombre, telefono, direccion, fecha
   (6,  2, 'Carmen Edith Suárez',          '+591 71222233', 'Av. Mariscal 1201, La Paz',             '2026-04-02 11:00:00'),
   (7,  3, 'Jorge Antonio Vargas',        '+591 73333344', 'Av. 6 de Agosto 210, Cochabamba',       '2026-05-18 15:25:00'),
   (8,  4, 'Lucía Mendoza Áñez',          '+591 74444455', 'Av. Ballivián 890, La Paz',             '2026-06-30 09:35:00');
-
 
 -- =====================================================================
 -- 11-15. TOKENS Y SESIONES  ·  9 filas en total
@@ -279,7 +274,6 @@ INSERT INTO sesiones (id_sesion, usuario_id, refresh_token, ip_origen, user_agen
   (5, 11, 'rt-0005-juan-web-activa',               '190.129.77.102','Mozilla/5.0 (Linux; Android 14)',      '2026-09-26 20:00:00', NULL, true),
   (6,  7, 'rt-0006-vendedor-cbb-cerrada',          '190.129.18.90', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', '2026-09-26 18:00:00', '2026-09-26 20:00:00', false);
 
-
 -- =====================================================================
 -- 16. BITACORA DE AUDITORIA  ·  12 filas
 -- id_usuario va con ON DELETE SET NULL, o sea que un registro sobrevive a
@@ -300,7 +294,6 @@ INSERT INTO bitacora_auditoria (id_bitacora, id_usuario, accion_sql, tabla_afect
   (11,  1, 'UPDATE', 'usuarios_empleados',  9,    'Empleado dado de baja',                            '127.0.0.1',    'EA-Script/1.0'),
   (12, NULL, 'DELETE', 'token_blacklist',  1,    'Limpieza de tokens caducados',                     '127.0.0.1',    'EA-Script/1.0');
 
-
 -- =====================================================================
 -- 17. CONVERSACIONES CON LA IA  ·  6 filas
 -- =====================================================================
@@ -310,9 +303,8 @@ INSERT INTO conversaciones_ia (id_conversacion, id_usuario, mensaje, respuesta) 
   (2, 10, '¿Que llevo para una reunion?',                    'Para un look de trabajo, el Pantalon Sastre de Confecciones Sur en color Gris oscuro.'),
   (3, 11, '¿Tienen abrigos de invierno?',                   'Si, tenemos la Chaqueta Puffer de Textiles del Norte desde 480 Bs.'),
   (4, 11, '¿Cuales son los colores de esa chaqueta?',       'La tenemos en Negro, Azul marino y Mostaza.'),
-  (5, 12, '¿Que edad tiene mi hijo? No se.'                  'Disculpe, no tengo ese dato. El modelo solo ve lo que usted elige.'),
+  (5, 12, '¿Que edad tiene mi hijo? No se.',                  'Disculpe, no tengo ese dato. El modelo solo ve lo que usted elige.'),
   (6, 13, 'Quiero devolver una polera',                     'Puede hacerla desde su cuenta, en Pedidos, y leevaluated el cambio en 5 dias.');
-
 
 -- =====================================================================
 -- 18. REPORTES GENERATIVOS  ·  4 filas
@@ -324,7 +316,6 @@ INSERT INTO reportes_generativos (id_reporte, id_usuario, tipo, parametros, form
   (3, 1, 'inventario_bajo_minimo', '{"sucursal":1}'::jsonb, 'PDF', 's3://reportes/stock_bajo_2026_09_27.pdf'),
   (4, 2, 'rotacion_por_categoria', '{"categoria":2,"mes":9}'::jsonb, 'PDF', 's3://reportes/rotacion_pantalones_2026_09.pdf');
 
-
 -- =====================================================================
 -- 19. RESPALDOS  ·  4 filas
 -- =====================================================================
@@ -334,7 +325,6 @@ INSERT INTO respaldos (id_respaldo, fecha, tipo, tamano_bytes, estado, storage_u
   (2, '2026-09-08 02:00:00', 'Completo', 4380533248, 'Completado',    's3://respaldos/tm_2026_09_08.dump.gz', 1),
   (3, '2026-09-15 02:00:00', 'Completo', 4473356800, 'Completado',    's3://respaldos/tm_2026_09_15.dump.gz', 1),
   (4, '2026-09-27 02:00:00', 'Diferencial',NULL,     'En Progreso',   's3://respaldos/tm_2026_09_27_dif.dump.gz', 1);
-
 
 -- =====================================================================
 -- 20. SUCURSALES  ·  4 filas
@@ -346,7 +336,6 @@ INSERT INTO sucursales (id_sucursal, nombre, direccion, id_ciudad, telefono) VAL
   (3, 'Tiendas Montaño - Recoleta', 'Av. Blanco Galindo 1200, Zona Recoleta',      1, '+591 22000003'),
   (4, 'Tiendas Montaño - Norte',    'Av. Blanco Galindo 2300, Equipetrol Norte',    3, '+591 44000004');
 
-
 -- =====================================================================
 -- 21. COLECCIONES  ·  4 filas
 -- =====================================================================
@@ -356,7 +345,6 @@ INSERT INTO colecciones (id_coleccion, nombre, descripcion, id_temporada) VALUES
   (2, 'Verano Liviano',    'Algodon y lino para los meses de calor',            1),
   (3, 'Navidad Montana',   'La coleccion de diciembre, con rojo y dorado',  3),
   (4, 'Basicos',           'Prendas basicas de temporada, todos los años',     4);
-
 
 -- =====================================================================
 -- 22. PROVEEDOR CONTACTOS  ·  12 filas
@@ -375,7 +363,6 @@ INSERT INTO proveedor_contactos (id_contacto, id_proveedor, nombre, cargo, telef
   (10, 7, 'Claudia Salazar',     'Diseno grafico',       '+591 72777889', 'c.salazar@modaprints.bo'),
   (11, 7, 'Óscar Terrazas',      'Operaciones',          '+591 72777890', 'o.terrazas@modaprints.bo'),
   (12, 8, 'Iván Miranda',        'Compras',              '+591 73888990', 'i.miranda@textilbazaar.bo');
-
 
 -- =====================================================================
 -- 23. PRODUCTOS  ·  24 filas
@@ -408,7 +395,6 @@ INSERT INTO productos (id_producto, codigo, nombre, descripcion, id_categoria, i
   (23, 'BLU-002', 'Camisa Oblicua a Cuadros',       'Camisa de algodón a cuadros, corte oblicuo',                     7, 4, 3, 159.00),
   (24, 'ACC-001', 'Cinturón de Cuero Artesanal',   'Cinturón de cuero con hebilla artesanal',                       8, 4, 4,  79.00);
 
-
 -- =====================================================================
 -- 24. PREFERENCIAS DE CLIENTE  ·  14 filas
 -- LAS 5 FK SON NULLABLE y no hay ni UNIQUE, ni indice, ni CHECK.   Se
@@ -432,7 +418,6 @@ INSERT INTO preferencias_cliente (id_preferencia, id_cliente, id_categoria, id_t
   (12, 6, 1,    4,    3,    1,  7),
   (13, 6, NULL, 4,    3,    1,  5),   -- solo el color, sin categoria  <-- NULL
   (14, 7, 1,    NULL, NULL,   NULL, 2);  -- solo la categoria            <-- tres NULL
-
 
 -- =====================================================================
 -- 25. HORARIOS DE SUCURSAL  ·  28 filas, 7 dias por cada una de las 4
@@ -460,7 +445,6 @@ INSERT INTO sucursal_horarios (id_sucursal, dia_semana, horario_apertura, horari
   (4, 'Viernes',    '10:00', '20:30'), (4, 'Sabado',      '10:00', '20:30'),
   (4, 'Domingo',    NULL,    NULL);
 
-
 -- =====================================================================
 -- 26. USUARIOS EMPLEADOS  ·  9 filas
 -- usuario_id es UNIQUE, y ademas tiene ON DELETE CASCADE.   La fila 9 es
@@ -478,7 +462,6 @@ INSERT INTO usuarios_empleados (id_empleado, usuario_id, sucursal_id, nombre, te
   (8, 8, 3, 'Miriam Tola',            '+591 22000017', 'Vendedora',              NULL, NULL),
   (9, 9, 1, 'Julio Paredes',          '+591 22000018', 'Cajero',                 '2026-08-15 00:00:00', 'Renuncia voluntaria');
 
-
 -- =====================================================================
 -- 27. ORDENES DE COMPRA  ·  6 filas
 -- estado es el DEFAULT 'Pendiente', y las 4 primeras pasan a Recibida.
@@ -491,7 +474,6 @@ INSERT INTO ordenes_compra (id_orden_compra, id_proveedor, id_sucursal, numero, 
   (4, 6, 1, 'OC-2026-0004', '2026-07-01 11:45:00', '2026-07-29 00:00:00', '2026-07-31 09:10:00', 'Recibida',  9340.00, 'Denim de alta calidad'),
   (5, 5, 1, 'OC-2026-0005', '2026-08-14 10:00:00', '2026-09-18 00:00:00', NULL,                'Pendiente', 14200.00, 'Alpaca de temporada, pedido grande'),
   (6, 7, 1, 'OC-2026-0006', '2026-09-20 16:30:00', '2026-10-05 00:00:00', NULL,                'Pendiente',  3150.00, NULL);
-
 
 -- =====================================================================
 -- 28. RESERVAS  ·  8 filas
@@ -510,7 +492,6 @@ INSERT INTO reservas (id_reserva, id_cliente, id_usuario, id_sucursal, fecha_res
   (7, 1, 10, 2, '2026-09-29', '17:00', 'Solicitada', 6, '2026-09-27 10:30:00', NULL, NULL),
   (8, 7,  3, 4, '2026-09-30', '11:00', 'Solicitada', 7, '2026-09-27 11:00:00', NULL, NULL);
 
-
 -- =====================================================================
 -- 29. CARRITOS  ·  8 filas
 -- OJO: la tabla NO tiene token_invitado.   El codigo del carrito de
@@ -527,7 +508,6 @@ INSERT INTO carritos (id_carrito, id_usuario, estado, id_sucursal, fecha_creacio
   (6,  2, 'Activo',            1, '2026-09-27 10:20:00'),
   (7,  3, 'Activo',            4, '2026-09-27 11:40:00'),
   (8,  1, 'En pago',           1, '2026-09-27 08:50:00');
-
 
 -- =====================================================================
 -- 30. PRODUCTO_TALLA_COLOR  ·  78 filas
@@ -602,7 +582,6 @@ INSERT INTO producto_talla_color (id_ptc, id_producto, id_talla, id_color, estad
   -- la escriba.  Aqui se documenta la diferencia.
   ( 78, 1, 4, 1, 'Sin stock');
 
-
 -- =====================================================================
 -- 31. IMAGENES DE PRODUCTO
 -- =====================================================================
@@ -659,7 +638,6 @@ INSERT INTO producto_imagenes (id_imagen, id_producto, id_color, url, es_princip
   ( 39, 19, 1, 'https://cdn.tiendasmontano.bo/p/19/1/1.jpg',true,  1),
   ( 40, 24, 1, 'https://cdn.tiendasmontano.bo/p/24/1/1.jpg',true,  1);
 
-
 -- =====================================================================
 -- 32. PRODUCTO COLECCION  ·  14 filas
 -- Es una tabla de union, y su PRIMARY KEY es (id_coleccion, id_producto).
@@ -671,7 +649,6 @@ INSERT INTO producto_coleccion (id_coleccion, id_producto) VALUES
   (3,  4), (3, 17), (3, 21),
   (4,  1), (4,  3), (4,  7), (4,  8), (4, 14), (4, 16), (4, 19), (4, 23), (4, 24);
 
-
 -- =====================================================================
 -- 33. RECEPCIONES  ·  4 filas
 -- =====================================================================
@@ -681,7 +658,6 @@ INSERT INTO recepciones (id_recepcion, id_orden_compra, id_sucursal, id_usuario,
   (2, 2, 1, 4, '2026-06-14 15:30:00', 'Registrada'),
   (3, 3, 2, 4, '2026-06-21 10:20:00', 'Registrada'),
   (4, 4, 1, 4, '2026-07-31 09:10:00', 'Registrada');
-
 
 -- =====================================================================
 -- 34. ITEMS DE RECEPCION  ·  9 filas
@@ -693,7 +669,6 @@ INSERT INTO recepcion_items (id_recepcion_item, id_recepcion, id_ptc, cantidad_p
   (1, 1, 49, 20, 20, 0), (2, 1, 56, 12, 12, 0), (3, 1, 59,  8,  8, 0), (4, 1, 61,  5,  4, -1),
   (5, 2,  1, 30, 30, 0), (6, 2,  2, 25, 25, 0), (7, 3, 73, 15, 15, 0),
   (8, 4, 21, 18, 18, 0), (9, 4, 23, 12, 12, 0);
-
 
 -- =====================================================================
 -- 35. ITEMS DE ORDEN DE COMPRA  ·  11 filas
@@ -711,7 +686,6 @@ INSERT INTO orden_compra_items (id_orden_item, id_orden_compra, id_ptc, cantidad
   ( 9, 2, 70, 15,  50.00,  750.00),
   (10, 3, 73, 15,  85.00, 1275.00), (11, 3, 74, 10,  85.00,  850.00);
 
-
 -- =====================================================================
 -- 36. ALERTAS DE STOCK  ·  8 filas
 -- =====================================================================
@@ -725,7 +699,6 @@ INSERT INTO alertas_stock_config (id_config, id_ptc, id_categoria, id_sucursal, 
   (6, 63, 5, 3, 3, false, NULL),
   (7, 47, 3, 2, 2, false, NULL),
   (8,  2, 1, 1, 4, true,  '2026-09-27 06:00:00');
-
 
 -- =====================================================================
 -- 37. INVENTARIO  ·  80 filas
@@ -759,21 +732,33 @@ INSERT INTO inventario_stock (id_stock, id_ptc, id_sucursal, cantidad_disponible
   ( 48,  1, 4, 15, 0, 5, 3), ( 49,  7, 4,  9, 0, 4, 2), ( 50, 23, 4, 10, 0, 6, 4),
   ( 51, 41, 4,  8, 0, 3, 2), ( 52, 54, 4, 11, 0, 4, 3), ( 53, 69, 4,  7, 0, 2, 2),
   ( 54, 74, 4,  9, 0, 3, 3), ( 55, 77, 4, 10, 0, 4, 2),
-  ( 56, 11, 1,  5, 0, 2, 2), ( 57, 19, 1,  4, 0, 3, 2), ( 58, 27, 1,  9, 0, 4, 3),
+  ( 56, 11, 2,  5, 0, 2, 2), ( 57, 19, 2,  4, 0, 3, 2), ( 58, 27, 1,  9, 0, 4, 3),
   ( 59, 37, 1,  6, 0, 2, 2), ( 60, 45, 1,  8, 0, 3, 2), ( 61, 50, 1,  7, 0, 4, 3),
   ( 62, 55, 1,  5, 0, 2, 2), ( 63, 58, 1,  6, 0, 3, 2), ( 64, 65, 1, 10, 0, 5, 3),
   ( 65, 66, 1,  8, 0, 4, 3), ( 66, 67, 1,  6, 0, 3, 3), ( 67, 71, 1,  9, 0, 4, 3),
-  ( 68, 72, 1,  7, 0, 3, 3), ( 69, 75, 1,  8, 0, 2, 3), ( 70, 16, 1, 11, 0, 5, 3),
-  ( 71, 18, 1,  9, 0, 4, 3), ( 72, 20, 1,  7, 0, 2, 3), ( 73, 28, 1,  8, 0, 3, 3),
+  ( 68, 72, 1,  7, 0, 3, 3), ( 69, 75, 1,  8, 0, 2, 3), ( 70, 16, 2, 11, 0, 5, 3),
+  ( 71, 18, 2,  9, 0, 4, 3), ( 72, 20, 2,  7, 0, 2, 3), ( 73, 28, 1,  8, 0, 3, 3),
   ( 74, 33, 1, 10, 0, 4, 3), ( 75, 38, 1,  6, 0, 2, 2), ( 76, 39, 1,  7, 0, 3, 2),
   ( 77, 42, 1,  9, 0, 4, 2), ( 78, 43, 1,  8, 0, 3, 2), ( 79, 47, 1,  5, 0, 2, 2),
   ( 80, 49, 1, 16, 0, 5, 4);
-
 
 -- =====================================================================
 -- 38. ITEMS DE VENTA  ·  26 filas
 -- =====================================================================
 
+INSERT INTO ventas (id_venta, id_cliente, id_usuario, id_sucursal, id_carrito, modalidad, metodo_pago, subtotal, impuestos, total, estado, fecha_venta) VALUES
+  ( 1, 1, 10, 1, 1, 'Online',      'Tarjeta',      506.00,  21.66,  527.66, 'Completada',  '2026-09-05 19:20:00'),
+  ( 2, 2, 11, 2, 2, 'Online',      'Tarjeta',      837.00,  33.24,  870.24, 'Completada',  '2026-09-08 21:40:00'),
+  ( 3, 3, 12, 1, NULL, 'Presencial', 'Efectivo',     688.00,  16.15,  704.15, 'Completada',  '2026-09-12 10:20:00'),
+  ( 4, 4, 13, 3, NULL, 'Presencial', 'Tarjeta',      636.00,  14.34,  650.34, 'Completada',  '2026-09-20 11:50:00'),
+  ( 5, 6,  2, 1, NULL, 'Presencial', 'Efectivo',     363.00,   7.18,  370.18, 'Completada',  '2026-09-25 15:20:00'),
+  ( 6, 7,  3, 4, NULL, 'Presencial', 'Tarjeta',     1918.00, 28.70, 1946.70, 'Completada',  '2026-09-26 18:10:00'),
+  ( 7, 3, 12, 1, NULL, 'Presencial', 'QR',          538.00,   5.15,  543.15, 'Completada',  '2026-09-26 19:50:00'),
+  ( 8, 1, 10, 1, NULL, 'Online',      'Tarjeta',      505.00,  21.56,  526.56, 'Completada',  '2026-09-27 08:10:00'),
+  ( 9, 7,  3, 1, NULL, 'Presencial', 'Efectivo',     698.00,  16.75,  714.75, 'Completada',  '2026-09-27 10:10:00'),
+  (10, 6,  2, 2, NULL, 'Presencial', 'Tarjeta',      365.00,   8.78,  373.78, 'Pendiente',  '2026-09-27 10:20:00'),
+  (11, 5, 14, 1, NULL, 'Online',      'Tarjeta',      237.00,  10.10,  247.10, 'Completada',  '2026-09-27 09:05:00'),
+  (12, 5, 14, 1, NULL, 'Online',      'QR',           119.00,   8.37,  127.37, 'Reembolsada', '2026-09-27 09:00:00');
 INSERT INTO venta_items (id_venta_item, id_venta, id_ptc, cantidad, precio_unitario, subtotal) VALUES
   ( 1,  1,  1, 2,  89.00, 178.00), ( 2,  1,  3, 1, 149.00, 149.00), ( 3,  1, 11, 1, 179.00, 179.00),
   ( 4,  2,  6, 1, 289.00, 289.00), ( 5,  2,  7, 1, 259.00, 259.00), ( 6,  2, 21, 1, 289.00, 289.00),
@@ -787,7 +772,6 @@ INSERT INTO venta_items (id_venta_item, id_venta, id_ptc, cantidad, precio_unita
   (23, 10, 51, 1, 1890.00, 1890.00), (24, 11,  5, 2,  79.00, 158.00),
   (25, 11, 17, 1,  79.00,  79.00), (26, 12,  2, 1, 119.00, 119.00);
 
-
 -- =====================================================================
 -- 39. ITEMS DE CARRITO  ·  14 filas
 -- =====================================================================
@@ -799,7 +783,6 @@ INSERT INTO carrito_items (id_carrito_item, id_carrito, id_ptc, cantidad, precio
   ( 9,  4,  6, 1, 289.00), (10,  4, 22, 1, 199.00),
   (11,  5,  5, 1,  79.00), (12,  5, 18, 1, 179.00), (13,  5, 19, 1, 269.00),
   (14,  6, 16, 1, 329.00);
-
 
 -- =====================================================================
 -- 40. COMPROBANTES  ·  8 filas
@@ -816,7 +799,6 @@ INSERT INTO comprobantes (id_comprobante, id_venta, numero, tipo, nit_cliente, r
   (7,  7, 'BOL-0007-2026', 'Factura',  NULL,         'Laura Mamani Choque',          550.58, '2026-09-26 20:00:00', 's3://comprobantes/2026/BOL-0007-2026.pdf'),
   (8, 12, 'BOL-0008-2026', 'Factura',  NULL,         'Ana Lucía López Herrera',      127.37, '2026-09-27 09:05:00', 's3://comprobantes/2026/BOL-0008-2026.pdf');
 
-
 -- =====================================================================
 -- 41. ITEMS DE RESERVA  ·  16 filas
 -- =====================================================================
@@ -831,22 +813,12 @@ INSERT INTO reserva_items (id_reserva_item, id_reserva, id_ptc, cantidad) VALUES
   (14, 7,  7, 1), (15, 7, 26, 1),
   (16, 8, 54, 1);
 
-
 -- =====================================================================
 -- 42. RESULTADOS DEL VESTIDOR  ·  14 filas
 -- resultado usa los tres valores que escribe el codigo: Gusta, Mediation
 -- y No gusta.   Y OJO: CU24 manifesto que la columna foto_resultado se
 -- escribe desde el codigo y NO existe en el esquema.   Aqui no aparece.
 -- =====================================================================
-
-INSERT INTO resultados_prueba (id_resultado, id_sesion_ra, id_ptc, resultado) VALUES
-  ( 1, 1,  1, 'Gusta'), ( 2, 1,  3, 'Gusta'), ( 3, 1, 11, 'No gusta'),
-  ( 4, 2,  6, 'Gusta'), ( 5, 2,  7, 'Mediation'), ( 6, 2, 21, 'Gusta'),
-  ( 7, 3, 40, 'Gusta'), ( 8, 3, 44, 'Gusta'),
-  ( 9, 4, 30, 'Gusta'), (10, 4,  8, 'No gusta'),
-  (11, 5, 22, 'Gusta'), (12, 5, 23, 'Mediation'),
-  (13, 6,  6, 'Gusta'), (14, 6, 21, 'Gusta');
-
 
 -- =====================================================================
 -- 43. SESIONES DEL VESTIDOR VIRTUAL  ·  6 filas
@@ -859,7 +831,13 @@ INSERT INTO sesiones_ra (id_sesion_ra, id_usuario, id_ptc, medidas_avatar, fecha
   (4, 13, 30, 'M:172,76,91;C:96,71,81', '2026-09-26 21:00:00', 4, 4),
   (5, 14, 22, 'M:158,68,83;C:89,66,76', '2026-09-27 08:40:00', 5, 5),
   (6, 10,  7, 'M:168,74,89;C:94,69,79', '2026-09-27 09:30:00', 7, NULL);
-
+INSERT INTO resultados_prueba (id_resultado, id_sesion_ra, id_ptc, resultado) VALUES
+  ( 1, 1,  1, 'Gusta'), ( 2, 1,  3, 'Gusta'), ( 3, 1, 11, 'No gusta'),
+  ( 4, 2,  6, 'Gusta'), ( 5, 2,  7, 'Mediation'), ( 6, 2, 21, 'Gusta'),
+  ( 7, 3, 40, 'Gusta'), ( 8, 3, 44, 'Gusta'),
+  ( 9, 4, 30, 'Gusta'), (10, 4,  8, 'No gusta'),
+  (11, 5, 22, 'Gusta'), (12, 5, 23, 'Mediation'),
+  (13, 6,  6, 'Gusta'), (14, 6, 21, 'Gusta');
 
 -- =====================================================================
 -- 44. VENTAS  ·  12 filas
@@ -871,21 +849,6 @@ INSERT INTO sesiones_ra (id_sesion_ra, id_usuario, id_ptc, medidas_avatar, fecha
 -- SIEMPRE pone 'Pendiente' al crear.  Aqui las 12 llevan el valor explicito,
 -- que es lo que hace la aplicacion.
 -- =====================================================================
-
-INSERT INTO ventas (id_venta, id_cliente, id_usuario, id_sucursal, id_carrito, modalidad, metodo_pago, subtotal, impuestos, total, estado, fecha_venta) VALUES
-  ( 1, 1, 10, 1, 1, 'Online',      'Tarjeta',      506.00,  21.66,  527.66, 'Completada',  '2026-09-05 19:20:00'),
-  ( 2, 2, 11, 2, 2, 'Online',      'Tarjeta',      837.00,  33.24,  870.24, 'Completada',  '2026-09-08 21:40:00'),
-  ( 3, 3, 12, 1, NULL, 'Presencial', 'Efectivo',     688.00,  16.15,  704.15, 'Completada',  '2026-09-12 10:20:00'),
-  ( 4, 4, 13, 3, NULL, 'Presencial', 'Tarjeta',      636.00,  14.34,  650.34, 'Completada',  '2026-09-20 11:50:00'),
-  ( 5, 6,  2, 1, NULL, 'Presencial', 'Efectivo',     363.00,   7.18,  370.18, 'Completada',  '2026-09-25 15:20:00'),
-  ( 6, 7,  3, 4, NULL, 'Presencial', 'Tarjeta',     1918.00, 28.70, 1946.70, 'Completada',  '2026-09-26 18:10:00'),
-  ( 7, 3, 12, 1, NULL, 'Presencial', 'QR',          538.00,   5.15,  543.15, 'Completada',  '2026-09-26 19:50:00'),
-  ( 8, 1, 10, 1, NULL, 'Online',      'Tarjeta',      505.00,  21.56,  526.56, 'Completada',  '2026-09-27 08:10:00'),
-  ( 9, 7,  3, 1, NULL, 'Presencial', 'Efectivo',     698.00,  16.75,  714.75, 'Completada',  '2026-09-27 10:10:00'),
-  (10, 6,  2, 2, NULL, 'Presencial', 'Tarjeta',      365.00,   8.78,  373.78, 'Pendiente',  '2026-09-27 10:20:00'),
-  (11, 5, 14, 1, NULL, 'Online',      'Tarjeta',      237.00,  10.10,  247.10, 'Completada',  '2026-09-27 09:05:00'),
-  (12, 5, 14, 1, NULL, 'Online',      'QR',           119.00,   8.37,  127.37, 'Reembolsada', '2026-09-27 09:00:00');
-
 
 -- =====================================================================
 -- 45. TRANSACCIONES DE PAGO  ·  13 filas
@@ -908,7 +871,6 @@ INSERT INTO transacciones_pago (id_transaccion, id_venta, id_usuario, proveedor_
   (11, 11, 14, 'sandbox',  247.10, 'BOB', 'Tarjeta',  'Aprobado',  'BOL-0009-2026', 'pi_3Qa1Xy2E3eZv4d', '2026-09-27 09:05:05', NULL),
   (12, 12, 14, NULL,       127.37, 'BOB', 'QR',       'Rechazado', NULL,            'qr_1h2i3j4k5l6m7', '2026-09-27 09:00:03', 'Rechazada por el cliente'),
   (13,  6,  3, 'sandbox', 1946.70, 'BOB', 'Tarjeta',  'Rechazado', NULL,            NULL,               '2026-09-26 18:00:05', 'Monto no válido');
-
 
 -- =====================================================================
 -- 46. MOVIMIENTOS DE INVENTARIO  ·  40 filas
@@ -972,7 +934,6 @@ INSERT INTO movimientos_inventario (id_movimiento, id_ptc, id_sucursal, tipo_mov
   (39,  2, 1, 'Venta',              -1, 12, 11, 'VNT-12',  14, NULL, 12, NULL, '2026-09-27 09:00:00'),
   (40, 10, 1, 'Venta',              -1,  8,  7, 'VNT-5',   2,  NULL,  5, NULL, '2026-09-25 15:20:00');
 
-
 -- =====================================================================
 -- 47. DEVOLUCIONES  ·  3 filas
 -- =====================================================================
@@ -981,7 +942,6 @@ INSERT INTO devoluciones (id_devolucion, id_venta, id_usuario, id_sucursal, moti
   (1,  6, 3, 4, 'La chaqueta de cuero no le sirvio de talla', 'Aprobada',   '2026-09-27 10:50:00', '2026-09-27 11:00:00'),
   (2, 12, 14, 1, 'Se arrepintio de la compra, solo 3 dias',   'En trámite', '2026-09-27 09:10:00', NULL),
   (3,  7, 12, 1, 'El vestido le quedo pequeno',               'Rechazada',  '2026-09-26 20:10:00', '2026-09-26 20:30:00');
-
 
 -- =====================================================================
 -- 48. ITEMS DE DEVOLUCION  ·  4 filas
@@ -992,7 +952,6 @@ INSERT INTO devolucion_items (id_devolucion_item, id_devolucion, id_ptc, cantida
   (2, 2,  2, 1, 'Reembolso'),
   (3, 3, 20, 1, 'Cambio de talla'),
   (4, 3, 66, 1, 'Cambio de talla');
-
 
 -- =====================================================================
 -- 49. HISTORIAL DE NAVEGACION  ·  20 filas
@@ -1010,7 +969,6 @@ INSERT INTO historial_navegacion (id_historial, id_usuario, id_ptc, fecha) VALUE
   (15, 12, 44, '2026-09-25 18:53:00'), (16, 12, 20, '2026-09-25 18:57:00'),
   (17, 13, 30, '2026-09-26 19:40:00'), (18, 13,  8, '2026-09-26 19:44:00'),
   (19, 14, 22, '2026-09-27 08:30:00'), (20, 14, 23, '2026-09-27 08:32:00');
-
 
 -- =====================================================================
 -- 50. RECOMENDACIONES DE LA IA  ·  16 filas
@@ -1038,7 +996,6 @@ INSERT INTO recomendaciones_ia (id_recomendacion, id_usuario, id_ptc, justificac
   (15, 14, 23, 'Porque usaste el filtro de precio parecido'),
   (16, 14, 24, 'Accesorio que complementa tu compra');
 
-
 -- =====================================================================
 -- 51. PRECIOS POR PRODUCTO_TALLA_COLOR  ·  26 filas
 -- id_ptc es UNIQUE en la practica por la ON DELETE CASCADE, y aqui cada
@@ -1059,7 +1016,6 @@ INSERT INTO producto_precios (id_precio, id_ptc, precio, fecha_inicio, fecha_fin
   (21, 22, 199.00, '2026-04-05', NULL), (22, 23, 159.00, '2026-04-05', NULL),
   (23, 24,  79.00, '2026-04-10', NULL), (24, 25, 249.00, '2026-04-10', NULL),
   (25, 26, 199.00, '2026-05-01', NULL), (26,  7, 279.00, '2026-07-01', '2026-12-31');
-
 
 -- =====================================================================
 -- SECUENCIAS
@@ -1121,7 +1077,6 @@ SELECT setval(pg_get_serial_sequence('recomendaciones_ia', 'id_recomendacion'), 
 SELECT setval(pg_get_serial_sequence('producto_precios', 'id_precio'),    (SELECT MAX(id_precio) FROM producto_precios));
 
 COMMIT;
-
 
 -- =====================================================================
 -- INFORME DE VERIFICACIÓN
@@ -1230,3 +1185,7 @@ SELECT 'ventas',            COUNT(*) FROM ventas            UNION ALL
 SELECT 'movimientos_inventario', COUNT(*) FROM movimientos_inventario UNION ALL
 SELECT 'transacciones_pago', COUNT(*) FROM transacciones_pago UNION ALL
 SELECT 'TOTAL de filas insertadas', 1;
+
+-- Se reactivan los triggers.
+ALTER TABLE movimientos_inventario ENABLE TRIGGER trg_movimiento_inventario;
+ALTER TABLE usuarios ENABLE TRIGGER trg_bloquear_usuario_5_intentos;

@@ -35,9 +35,9 @@ services:
       - db-data:/var/lib/postgresql/data
       # El esquema y los datos se cargan solo con el volumen vacio, en orden
       # alfabetico, que es el orden en que los ejecuta Postgres.
-      - "./BASE DE DATOS/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro"
-      - "./BASE DE DATOS/poblacion_datos.sql:/docker-entrypoint-initdb.d/02_poblacion_datos.sql:ro"
-      - "./BASE DE DATOS/seed_imagenes_productos.sql:/docker-entrypoint-initdb.d/03_seed_imagenes_productos.sql:ro"
+      - "./sql/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro"
+      - "./sql/02_poblacion_datos.sql:/docker-entrypoint-initdb.d/02_poblacion_datos.sql:ro"
+      - "./sql/03_seed_imagenes_productos.sql:/docker-entrypoint-initdb.d/03_seed_imagenes_productos.sql:ro"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d tiendas_montano"]
       interval: 5s
